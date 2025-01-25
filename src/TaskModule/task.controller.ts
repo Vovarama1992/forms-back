@@ -29,8 +29,8 @@ export class TaskController {
     description: 'The task has been successfully created.',
   })
   @ApiBody({ type: CreateTaskDto })
-  createTask(@Body() createTaskDto: CreateTaskDto) {
-    return this.taskService.createTask(createTaskDto);
+  createTask(@Body() createTaskDto: CreateTaskDto, @Req() req: Request) {
+    return this.taskService.createTask(createTaskDto, req);
   }
 
   @Patch(':taskId/increment-views')

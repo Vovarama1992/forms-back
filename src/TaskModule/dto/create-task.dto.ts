@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsArray, ValidateNested, IsInt } from 'class-validator';
+import { IsString, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { OptionDto } from './option.dto';
 import { InputDto } from './input.dto';
@@ -36,11 +36,4 @@ export class CreateTaskDto {
   @ValidateNested({ each: true })
   @Type(() => InputDto)
   inputs: InputDto[];
-
-  @ApiProperty({
-    description: 'ID of the creator of the task',
-    example: 1,
-  })
-  @IsInt()
-  creatorId: number;
 }

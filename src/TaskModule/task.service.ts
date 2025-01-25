@@ -17,8 +17,10 @@ export class TaskService {
     private readonly userService: UsersService,
   ) {}
 
-  async createTask(createTaskDto: CreateTaskDto) {
-    const { label, description, options, inputs, creatorId } = createTaskDto;
+  async createTask(createTaskDto: CreateTaskDto, req: Request) {
+    const user = await this.userService.authenticate(req);
+    const creatorId = user.id;
+    const { label, description, options, inputs } = createTaskDto;
 
     return this.prisma.task.create({
       data: {
