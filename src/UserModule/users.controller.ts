@@ -1,10 +1,11 @@
 import { Controller, Get, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Request as Req } from 'express';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 
 @Controller('users')
+@ApiTags('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
