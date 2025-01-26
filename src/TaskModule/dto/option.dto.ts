@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsInt } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 
 export class OptionDto {
   @ApiProperty({
@@ -16,11 +16,4 @@ export class OptionDto {
   @IsOptional()
   @IsString()
   description?: string;
-
-  @ApiProperty({
-    description: 'ID of the task the input belongs to',
-    example: 1,
-  })
-  @IsInt()
-  taskId: number;
 }
