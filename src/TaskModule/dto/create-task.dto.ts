@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsArray } from 'class-validator';
+import { IsString, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { OptionDto } from './option.dto';
 import { InputDto } from './input.dto';
@@ -23,6 +23,11 @@ export class CreateTaskDto {
     description: 'List of options for the task',
     type: [OptionDto],
   })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => OptionDto)
+  options: OptionDto[];
+
   @ApiProperty({
     description: 'List of inputs for the task',
     type: [InputDto],
@@ -30,8 +35,4 @@ export class CreateTaskDto {
   @IsArray()
   @Type(() => String)
   inputs: string[];
-
-  @IsArray()
-  @Type(() => Number)
-  options: number[];
 }

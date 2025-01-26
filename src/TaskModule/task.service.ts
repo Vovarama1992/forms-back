@@ -6,7 +6,6 @@ import {
 import { PrismaService } from 'src/PrismaModule/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { OptionDto } from './dto/option.dto';
-import { InputDto } from './dto/input.dto';
 import { UsersService } from 'src/UserModule/users.service';
 import { Request } from 'express';
 
@@ -34,8 +33,8 @@ export class TaskService {
           })),
         },
         inputs: {
-          create: inputs.map((input: InputDto) => ({
-            label: input.label,
+          create: inputs.map((input: string) => ({
+            label: input,
           })),
         },
       },
