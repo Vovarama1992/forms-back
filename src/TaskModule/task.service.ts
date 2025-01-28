@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'src/PrismaModule/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { OptionDto } from './dto/option.dto';
@@ -17,114 +13,125 @@ export class TaskService {
   ) {}
 
   async createTask(createTaskDto: CreateTaskDto, req: Request) {
-    const user = await this.userService.authenticate(req);
-    const creatorId = user.id;
-    const { label, description, options, inputs } = createTaskDto;
+    try {
+      const user = await this.userService.authenticate(req);
+      const creatorId = user.id;
+      const { label, description, options, inputs } = createTaskDto;
 
-    return this.prisma.task.create({
-      data: {
-        label,
-        description,
-        creatorId,
-        options: {
-          create: options.map((option: OptionDto) => ({
-            label: option.label,
-            description: option.description,
-          })),
+      return await this.prisma.task.create({
+        data: {
+          label,
+          description,
+          creatorId,
+          options: {
+            create: options.map((option: OptionDto) => ({
+              label: option.label,
+              description: option.description,
+            })),
+          },
+          inputs: {
+            create: inputs.map((input: string) => ({
+              label: input,
+            })),
+          },
         },
-        inputs: {
-          create: inputs.map((input: string) => ({
-            label: input,
-          })),
-        },
-      },
-      include: { options: true, inputs: true },
-    });
+        include: { options: true, inputs: true },
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async incrementTaskViews(taskId: string) {
-    const task = await this.prisma.$transaction(async (prisma) => {
-      const currentTask = await prisma.task.findUnique({
-        where: { id: Number(taskId) },
-      });
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const currentTask = await prisma.task.findUniqueOrThrow({
+          where: { id: Number(taskId) },
+        });
 
-      return prisma.task.update({
-        where: { id: Number(taskId) },
-        data: {
-          openCount: currentTask ? currentTask.openCount + 1 : 1,
-        },
+        return prisma.task.update({
+          where: { id: Number(taskId) },
+          data: {
+            openCount: currentTask.openCount + 1,
+          },
+        });
       });
-    });
-
-    return task;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async getTasksByAuthenticatedUser(req: Request) {
-    const user = await this.userService.authenticate(req);
-    return this.prisma.task.findMany({
-      where: { creatorId: user.id },
-    });
+    try {
+      const user = await this.userService.authenticate(req);
+      return await this.prisma.task.findMany({
+        where: { creatorId: user.id },
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async getTaskById(id: number) {
-    return this.prisma.task.findUnique({
-      where: { id },
-      include: { options: true, inputs: true },
-    });
+    try {
+      return await this.prisma.task.findUniqueOrThrow({
+        where: { id },
+        include: { options: true, inputs: true },
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async getTaskByLabel(label: string) {
-    const task = await this.prisma.task.findUnique({
-      where: { label },
-      include: { options: true, inputs: true },
-    });
-
-    if (!task) {
-      throw new BadRequestException('Задача с таким лейблом не найдена.');
+    try {
+      return await this.prisma.task.findUniqueOrThrow({
+        where: { label },
+        include: { options: true, inputs: true },
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-
-    return task;
   }
 
   async getTaskStatisticsByLabel(label: string) {
-    const task = await this.prisma.task.findFirst({
-      where: { label },
-      include: { options: true, inputs: true },
-    });
+    try {
+      const task = await this.prisma.task.findFirstOrThrow({
+        where: { label },
+        include: { options: true, inputs: true },
+      });
 
-    if (!task) {
-      throw new NotFoundException('Task not found');
-    }
+      const options = await this.prisma.option.findMany({
+        where: { taskId: task.id },
+        include: { votes: true },
+      });
 
-    const options = await this.prisma.option.findMany({
-      where: { taskId: task.id },
-      include: {
-        votes: true,
-      },
-    });
-
-    const inputAnswers = await this.prisma.inputAnswer.findMany({
-      where: {
-        input: {
-          taskId: task.id,
+      const inputAnswers = await this.prisma.inputAnswer.findMany({
+        where: {
+          input: {
+            taskId: task.id,
+          },
         },
-      },
-    });
+      });
 
-    const statistics = {
-      totalVotes: options.reduce((sum, option) => sum + option.votes.length, 0),
-      totalInputAnswers: inputAnswers.length,
-      optionsStatistics: options.map((option) => ({
-        optionLabel: option.label,
-        votesCount: option.votes.length,
-      })),
-      taskDetails: {
-        label: task.label,
-        description: task.description,
-        openCount: task.openCount,
-      },
-    };
-
-    return statistics;
+      return {
+        totalVotes: options.reduce(
+          (sum, option) => sum + option.votes.length,
+          0,
+        ),
+        totalInputAnswers: inputAnswers.length,
+        optionsStatistics: options.map((option) => ({
+          optionLabel: option.label,
+          votesCount: option.votes.length,
+        })),
+        taskDetails: {
+          label: task.label,
+          description: task.description,
+          openCount: task.openCount,
+        },
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }
