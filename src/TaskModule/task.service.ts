@@ -4,13 +4,20 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { OptionDto } from './dto/option.dto';
 import { UsersService } from 'src/UserModule/users.service';
 import { Request } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class TaskService {
+  private readonly baseUrl: string;
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UsersService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.baseUrl =
+      this.configService.get<string>('BASE_URL') ||
+      'https://app.opticard.co/api';
+  }
 
   async createTask(createTaskDto: CreateTaskDto, req: Request) {
     try {
@@ -18,7 +25,7 @@ export class TaskService {
       const creatorId = user.id;
       const { label, description, options, inputs } = createTaskDto;
 
-      return await this.prisma.task.create({
+      const task = await this.prisma.task.create({
         data: {
           label,
           description,
@@ -35,6 +42,22 @@ export class TaskService {
             })),
           },
         },
+        include: { options: true, inputs: true },
+      });
+
+      await Promise.all(
+        task.options.map((option) =>
+          this.prisma.option.update({
+            where: { id: option.id },
+            data: {
+              imageUrl: `${this.baseUrl}/images/option-image/${task.id}/${option.label}`,
+            },
+          }),
+        ),
+      );
+
+      return this.prisma.task.findUnique({
+        where: { id: task.id },
         include: { options: true, inputs: true },
       });
     } catch (error) {

@@ -48,6 +48,7 @@ model Option {
   task        Task      @relation(fields: [taskId], references: [id])
   label       String   
   description String? 
+  imageUrl    String?
   votes       Vote[]    
 }
 

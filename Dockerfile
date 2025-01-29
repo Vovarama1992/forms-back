@@ -16,6 +16,9 @@ COPY . .
 # Генерируем Prisma Client (если используется Prisma)
 RUN npx prisma generate
 
+# Собираем приложение
+RUN npm run build
+
 # Открываем порты (если приложение слушает на порту 3001)
 EXPOSE 3001
 
