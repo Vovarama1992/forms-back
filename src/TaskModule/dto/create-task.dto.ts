@@ -37,5 +37,5 @@ export class CreateTaskDto {
   inputs: string[];
 
   @IsEnum(Visibility)
-  visibility: Visibility;
+  visible: Visibility;
 }

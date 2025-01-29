@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Task as PrismaTask } from '@prisma/client';
+import { Task as PrismaTask, Visibility } from '@prisma/client';
 
 export class TaskDto implements PrismaTask {
   @ApiProperty({
@@ -43,4 +43,11 @@ export class TaskDto implements PrismaTask {
     example: '2025-01-25T00:00:00.000Z',
   })
   updatedAt: Date;
+
+  @ApiProperty({
+    description: 'Visibility of the task',
+    enum: Visibility,
+    example: Visibility.PUBLIC,
+  })
+  visible: Visibility;
 }

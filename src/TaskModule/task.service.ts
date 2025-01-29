@@ -23,12 +23,13 @@ export class TaskService {
     try {
       const user = await this.userService.authenticate(req);
       const creatorId = user.id;
-      const { label, description, options, inputs } = createTaskDto;
+      const { label, description, options, inputs, visible } = createTaskDto;
 
       const task = await this.prisma.task.create({
         data: {
           label,
           description,
+          visible,
           creatorId,
           options: {
             create: options.map((option: OptionDto) => ({
