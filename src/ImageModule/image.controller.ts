@@ -25,7 +25,7 @@ import {
 export class ImageController {
   constructor() {}
 
-  @Post('upload-option-image/:taskId/:optionLabel')
+  @Post('upload-option-image/:taskId/:optionId')
   @ApiOperation({ summary: 'Upload an image for a task option' })
   @ApiParam({
     name: 'taskId',
@@ -58,10 +58,9 @@ export class ImageController {
           cb(null, dest);
         },
         filename: (req, file, cb) => {
-          const optionLabel = req.params.optionLabel;
-          const sanitizedLabel = encodeURIComponent(optionLabel);
+          const optionId = req.params.optionId;
           const extension = path.extname(file.originalname);
-          const filename = `${sanitizedLabel}${extension}`;
+          const filename = `${optionId}${extension}`;
           cb(null, filename);
         },
       }),
@@ -76,7 +75,7 @@ export class ImageController {
     return { message: 'Image uploaded successfully', imagePath };
   }
 
-  @Get('option-image/:taskId/:optionLabel')
+  @Get('option-image/:taskId/:optionId')
   @ApiOperation({ summary: 'Get an image for a task option' })
   @ApiParam({
     name: 'taskId',
@@ -98,7 +97,7 @@ export class ImageController {
   })
   async getOptionImage(
     @Param('taskId') taskId: string,
-    @Param('optionLabel') optionLabel: string,
+    @Param('optionId') optionId: string,
     @Res() res: Response,
   ) {
     const taskFolderPath = path.join(__dirname, '../../images', taskId);
@@ -109,7 +108,7 @@ export class ImageController {
 
     const files = fs.readdirSync(taskFolderPath);
 
-    const file = files.find((file) => file.startsWith(optionLabel));
+    const file = files.find((file) => file.startsWith(optionId));
 
     if (file) {
       return res.sendFile(path.join(taskFolderPath, file));

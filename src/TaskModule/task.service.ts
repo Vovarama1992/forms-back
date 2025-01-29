@@ -50,7 +50,7 @@ export class TaskService {
           this.prisma.option.update({
             where: { id: option.id },
             data: {
-              imageUrl: `${this.baseUrl}/images/option-image/${task.id}/${option.label}`,
+              imageUrl: `${this.baseUrl}/images/option-image/${task.id}/${option.id}`,
             },
           }),
         ),
