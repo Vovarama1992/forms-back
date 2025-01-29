@@ -73,7 +73,8 @@ export class TaskController {
     type: TaskDto,
   })
   getTaskByLabel(@Param('label') label: string) {
-    return this.taskService.getTaskByLabel(label);
+    const decodedLabel = decodeURIComponent(label);
+    return this.taskService.getTaskByLabel(decodedLabel);
   }
 
   @Get('statistics/:label')
