@@ -59,8 +59,9 @@ export class ImageController {
         },
         filename: (req, file, cb) => {
           const optionLabel = req.params.optionLabel;
+          const sanitizedLabel = encodeURIComponent(optionLabel);
           const extension = path.extname(file.originalname);
-          const filename = `${optionLabel}${extension}`;
+          const filename = `${sanitizedLabel}${extension}`;
           cb(null, filename);
         },
       }),
