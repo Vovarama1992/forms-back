@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Task as PrismaTask, Visibility } from '@prisma/client';
+import { IsEnum } from 'class-validator';
 
 export class TaskDto implements PrismaTask {
   @ApiProperty({
@@ -49,5 +50,6 @@ export class TaskDto implements PrismaTask {
     enum: Visibility,
     example: Visibility.PUBLIC,
   })
+  @IsEnum(Visibility)
   visible: Visibility;
 }

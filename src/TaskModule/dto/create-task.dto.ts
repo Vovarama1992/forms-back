@@ -36,6 +36,11 @@ export class CreateTaskDto {
   @Type(() => String)
   inputs: string[];
 
+  @ApiProperty({
+    description: 'Visibility of the task',
+    enum: Visibility,
+    example: Visibility.PUBLIC,
+  })
   @IsEnum(Visibility)
   visible: Visibility;
 }
