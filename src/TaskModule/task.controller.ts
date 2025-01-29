@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -20,6 +21,7 @@ import { TaskDto } from './dto/task.dto';
 //@UseGuards(JwtAuthGuard)
 @ApiTags('tasks')
 export class TaskController {
+  private readonly logger = new Logger('TaskController');
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
@@ -73,7 +75,10 @@ export class TaskController {
     type: TaskDto,
   })
   getTaskByLabel(@Param('label') label: string) {
+    Logger.log(`Encoded label: ${label}`, 'TaskController');
     const decodedLabel = decodeURIComponent(label);
+    Logger.log(`Decoded label: ${decodedLabel}`, 'TaskController');
+
     return this.taskService.getTaskByLabel(decodedLabel);
   }
 
