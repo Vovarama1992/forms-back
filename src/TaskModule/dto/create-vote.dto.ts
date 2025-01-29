@@ -26,4 +26,11 @@ export class CreateVoteDto {
     },
   })
   inputs?: Record<string, string>;
+
+  @ApiProperty({
+    description: 'ID пользователя (необязательное поле)',
+    example: 1,
+    required: false,
+  })
+  userId?: number;
 }

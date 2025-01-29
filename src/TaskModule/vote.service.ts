@@ -1,18 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/PrismaModule/prisma.service';
 import { CreateVoteDto } from './dto/create-vote.dto';
+import { UsersService } from 'src/UserModule/users.service';
 
 @Injectable()
 export class VoteService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userService: UsersService,
+  ) {}
 
-  async voteForOption(taskId: string, createVoteDto: CreateVoteDto) {
+  async voteForOption(taskId: string, createVoteDto: CreateVoteDto, user: any) {
     const { optionId, reason, inputs } = createVoteDto;
 
     const vote = await this.prisma.vote.create({
       data: {
         optionId,
-        userId: 1,
+        userId: user?.id || null,
         reason,
       },
     });
@@ -22,7 +26,7 @@ export class VoteService {
         await this.prisma.inputAnswer.create({
           data: {
             inputId: Number(key),
-            userId: 1,
+            userId: user?.id || 1,
             value,
           },
         });

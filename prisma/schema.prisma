@@ -34,6 +34,7 @@ model Task {
   id          Int       @id @default(autoincrement())
   creatorId   Int
   label       String    @unique
+  visible     Visibility
   description String  
   options     Option[]  
   inputs      Input[]  
@@ -56,10 +57,10 @@ model Vote {
   id        Int       @id @default(autoincrement())
   optionId  Int       
   option    Option    @relation(fields: [optionId], references: [id])
-  userId    Int       
+  userId    Int?      
   reason    String?  
   createdAt DateTime  @default(now())
-  user      User      @relation(fields: [userId], references: [id])
+  user      User?     @relation(fields: [userId], references: [id]) 
 }
 
 model Input {
@@ -78,4 +79,9 @@ model InputAnswer {
   userId  Int
   user    User   @relation(fields: [userId], references: [id])
   value   String
+}
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
 }

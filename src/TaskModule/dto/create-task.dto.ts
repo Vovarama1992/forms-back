@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsArray, ValidateNested } from 'class-validator';
+import { IsString, IsArray, ValidateNested, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
 import { OptionDto } from './option.dto';
+import { Visibility } from '@prisma/client';
 
 export class CreateTaskDto {
   @ApiProperty({
@@ -34,4 +35,7 @@ export class CreateTaskDto {
   @IsArray()
   @Type(() => String)
   inputs: string[];
+
+  @IsEnum(Visibility)
+  visibility: Visibility;
 }
