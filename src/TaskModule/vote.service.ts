@@ -25,7 +25,7 @@ export class VoteService {
       for (const [key, value] of Object.entries(inputs)) {
         await this.prisma.inputAnswer.create({
           data: {
-            inputId: Number(key),
+            inputId: Number(key), // Простой способ указать связь с инпутом
             userId: user?.id || null,
             value,
           },

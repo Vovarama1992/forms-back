@@ -75,7 +75,6 @@ model Input {
 model InputAnswer {
   id      Int    @id @default(autoincrement())
   inputId Int
-  input   Input  @relation(fields: [inputId], references: [id])
   userId  Int
   user    User   @relation(fields: [userId], references: [id])
   value   String
