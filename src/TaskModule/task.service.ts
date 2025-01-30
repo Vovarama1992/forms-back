@@ -5,6 +5,7 @@ import { OptionDto } from './dto/option.dto';
 import { UsersService } from 'src/UserModule/users.service';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { TaskStatisticsDto } from './dto/statistic.dto';
 
 @Injectable()
 export class TaskService {
@@ -66,11 +67,11 @@ export class TaskService {
     }
   }
 
-  async incrementTaskViews(taskId: string) {
+  async incrementTaskViews(taskId: number) {
     try {
       return await this.prisma.$transaction(async (prisma) => {
         const currentTask = await prisma.task.findUniqueOrThrow({
-          where: { id: Number(taskId) },
+          where: { id: taskId },
         });
 
         return prisma.task.update({
@@ -109,50 +110,53 @@ export class TaskService {
 
   async getTaskByLabel(label: string) {
     try {
-      return await this.prisma.task.findUniqueOrThrow({
+      const task = await this.prisma.task.findUniqueOrThrow({
         where: { label },
         include: { options: true, inputs: true },
       });
+
+      // Инкрементируем счетчик просмотров
+      await this.incrementTaskViews(task.id);
+
+      return task;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
-  async getTaskStatisticsByLabel(label: string) {
+  async getTaskStatisticsByLabel(label: string): Promise<TaskStatisticsDto> {
     try {
       const task = await this.prisma.task.findFirstOrThrow({
         where: { label },
-        include: { options: true, inputs: true },
-      });
-
-      const options = await this.prisma.option.findMany({
-        where: { taskId: task.id },
-        include: { votes: true },
-      });
-
-      const inputAnswers = await this.prisma.inputAnswer.findMany({
-        where: {
-          input: {
-            taskId: task.id,
+        include: {
+          options: {
+            include: {
+              votes: true,
+            },
           },
+          inputs: true,
         },
       });
 
+      const optionsStatistics = task.options.map((option) => ({
+        optionLabel: option.label,
+        votesCount: option.votes.length,
+        reasons: option.votes
+          .map((vote) => vote.reason)
+          .filter((reason): reason is string => Boolean(reason)),
+      }));
+
       return {
-        totalVotes: options.reduce(
-          (sum, option) => sum + option.votes.length,
-          0,
-        ),
-        totalInputAnswers: inputAnswers.length,
-        optionsStatistics: options.map((option) => ({
-          optionLabel: option.label,
-          votesCount: option.votes.length,
-        })),
         taskDetails: {
           label: task.label,
           description: task.description,
           openCount: task.openCount,
         },
+        totalVotes: optionsStatistics.reduce(
+          (sum, opt) => sum + opt.votesCount,
+          0,
+        ),
+        optionsStatistics,
       };
     } catch (error) {
       throw new BadRequestException(error.message);

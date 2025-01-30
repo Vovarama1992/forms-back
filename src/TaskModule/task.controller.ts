@@ -42,7 +42,7 @@ export class TaskController {
     description: 'Task view count has been successfully incremented.',
   })
   async incrementViews(@Param('taskId') taskId: string) {
-    return this.taskService.incrementTaskViews(taskId);
+    return this.taskService.incrementTaskViews(Number(taskId));
   }
 
   @Get('by-id/:id')

@@ -3,10 +3,10 @@ import { ApiProperty, ApiExtraModels } from '@nestjs/swagger';
 @ApiExtraModels()
 class OptionStatisticsDto {
   @ApiProperty({
-    description: 'ID of the option',
-    example: 1,
+    description: 'Label of the option',
+    example: 'Perekrestok',
   })
-  optionId: number;
+  optionLabel: string;
 
   @ApiProperty({
     description: 'Number of votes for the option',
@@ -22,28 +22,7 @@ class OptionStatisticsDto {
 }
 
 @ApiExtraModels()
-class InputAnswerStatisticsDto {
-  @ApiProperty({
-    description: 'ID of the input',
-    example: 1,
-  })
-  inputId: number;
-
-  @ApiProperty({
-    description: 'Number of answers for the input',
-    example: 3,
-  })
-  answersCount: number;
-
-  @ApiProperty({
-    description: 'List of values provided by users for this input',
-    example: ['Answer 1', 'Answer 2'],
-  })
-  values: string[];
-}
-
-@ApiExtraModels()
-export class TaskStatisticsDto {
+class TaskDetailsDto {
   @ApiProperty({
     description: 'Label of the task',
     example: 'Which product do you like?',
@@ -61,7 +40,10 @@ export class TaskStatisticsDto {
     example: 10,
   })
   openCount: number;
+}
 
+@ApiExtraModels()
+export class TaskStatisticsDto {
   @ApiProperty({
     description: 'Statistics of the task options',
     type: [OptionStatisticsDto],
@@ -69,8 +51,14 @@ export class TaskStatisticsDto {
   optionsStatistics: OptionStatisticsDto[];
 
   @ApiProperty({
-    description: 'Statistics of the task inputs',
-    type: [InputAnswerStatisticsDto],
+    description: 'Task details object',
+    type: TaskDetailsDto,
   })
-  inputsStatistics: InputAnswerStatisticsDto[];
+  taskDetails: TaskDetailsDto;
+
+  @ApiProperty({
+    description: 'Total votes across all options',
+    example: 15,
+  })
+  totalVotes: number;
 }
