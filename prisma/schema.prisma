@@ -77,7 +77,7 @@ model InputAnswer {
   inputId Int
   input   Input  @relation(fields: [inputId], references: [id])
   userId  Int
-  user    User   @relation(fields: [userId], references: [id])
+  user    User?   @relation(fields: [userId], references: [id])
   value   String
 }
 
