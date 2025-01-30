@@ -5,7 +5,7 @@ import { OptionDto } from './dto/option.dto';
 import { UsersService } from 'src/UserModule/users.service';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { TaskStatisticsDto } from './dto/statistic.dto';
+import { OptionStatisticsDto, TaskStatisticsDto } from './dto/statistic.dto';
 
 @Injectable()
 export class TaskService {
@@ -138,13 +138,16 @@ export class TaskService {
         },
       });
 
-      const optionsStatistics = task.options.map((option) => ({
-        optionLabel: option.label,
-        votesCount: option.votes.length,
-        reasons: option.votes
-          .map((vote) => vote.reason)
-          .filter((reason): reason is string => Boolean(reason)),
-      }));
+      const optionsStatistics: OptionStatisticsDto[] = task.options.map(
+        (option) => ({
+          optionLabel: option.label,
+          imageUrl: option.imageUrl,
+          votesCount: option.votes.length,
+          reasons: option.votes
+            .map((vote) => vote.reason)
+            .filter((reason): reason is string => Boolean(reason)),
+        }),
+      );
 
       return {
         taskDetails: {

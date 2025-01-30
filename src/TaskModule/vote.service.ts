@@ -26,7 +26,7 @@ export class VoteService {
         await this.prisma.inputAnswer.create({
           data: {
             inputId: Number(key),
-            userId: user?.id || 1,
+            userId: user?.id || null,
             value,
           },
         });

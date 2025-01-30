@@ -1,7 +1,7 @@
 import { ApiProperty, ApiExtraModels } from '@nestjs/swagger';
 
 @ApiExtraModels()
-class OptionStatisticsDto {
+export class OptionStatisticsDto {
   @ApiProperty({
     description: 'Label of the option',
     example: 'Perekrestok',
@@ -19,6 +19,12 @@ class OptionStatisticsDto {
     example: ["It's the best choice!", 'I agree with this option'],
   })
   reasons: string[];
+
+  @ApiProperty({
+    description: 'Image URL of the option',
+    example: 'https://app.opticard.co/api/images/option-image/14/11',
+  })
+  imageUrl: string;
 }
 
 @ApiExtraModels()
