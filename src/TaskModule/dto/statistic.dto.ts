@@ -67,7 +67,7 @@ export class InputStatisticsDto {
 
   @ApiProperty({
     description: 'List of answers for this input',
-    type: [InputAnswerDto],
+    type: [String],
   })
   answers: string[];
 }
