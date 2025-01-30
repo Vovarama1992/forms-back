@@ -49,12 +49,42 @@ class TaskDetailsDto {
 }
 
 @ApiExtraModels()
+export class InputAnswerDto {
+  @ApiProperty({
+    description: 'User-provided answer',
+    example: 'I prefer organic food',
+  })
+  inputLabel: string;
+}
+
+@ApiExtraModels()
+export class InputStatisticsDto {
+  @ApiProperty({
+    description: 'Label of the input field',
+    example: 'Why do you like this product?',
+  })
+  inputLabel: string;
+
+  @ApiProperty({
+    description: 'List of answers for this input',
+    type: [InputAnswerDto],
+  })
+  answers: string[];
+}
+
+@ApiExtraModels()
 export class TaskStatisticsDto {
   @ApiProperty({
     description: 'Statistics of the task options',
     type: [OptionStatisticsDto],
   })
   optionsStatistics: OptionStatisticsDto[];
+
+  @ApiProperty({
+    description: 'Statistics of the user inputs',
+    type: [InputStatisticsDto],
+  })
+  inputsStatistics: InputStatisticsDto[];
 
   @ApiProperty({
     description: 'Task details object',

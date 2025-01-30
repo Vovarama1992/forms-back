@@ -5,7 +5,11 @@ import { OptionDto } from './dto/option.dto';
 import { UsersService } from 'src/UserModule/users.service';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { OptionStatisticsDto, TaskStatisticsDto } from './dto/statistic.dto';
+import {
+  InputStatisticsDto,
+  OptionStatisticsDto,
+  TaskStatisticsDto,
+} from './dto/statistic.dto';
 
 @Injectable()
 export class TaskService {
@@ -134,7 +138,11 @@ export class TaskService {
               votes: true,
             },
           },
-          inputs: true,
+          inputs: {
+            include: {
+              answers: true,
+            },
+          },
         },
       });
 
@@ -149,6 +157,13 @@ export class TaskService {
         }),
       );
 
+      const inputsStatistics: InputStatisticsDto[] = task.inputs.map(
+        (input) => ({
+          inputLabel: input.label,
+          answers: input.answers.map((answer) => answer.value),
+        }),
+      );
+
       return {
         taskDetails: {
           label: task.label,
@@ -160,6 +175,7 @@ export class TaskService {
           0,
         ),
         optionsStatistics,
+        inputsStatistics,
       };
     } catch (error) {
       throw new BadRequestException(error.message);
