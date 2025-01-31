@@ -87,6 +87,12 @@ export class TaskStatisticsDto {
   inputsStatistics: InputStatisticsDto[];
 
   @ApiProperty({
+    description: 'Creator ID of the task',
+    example: 1,
+  })
+  creatorId: number;
+
+  @ApiProperty({
     description: 'Task details object',
     type: TaskDetailsDto,
   })

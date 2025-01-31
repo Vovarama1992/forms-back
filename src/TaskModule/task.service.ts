@@ -146,6 +146,10 @@ export class TaskService {
         },
       });
 
+      const user = await this.prisma.user.findUnique({
+        where: { id: task.creatorId },
+      });
+
       const optionsStatistics: OptionStatisticsDto[] = task.options.map(
         (option) => ({
           optionLabel: option.label,
@@ -165,6 +169,7 @@ export class TaskService {
       );
 
       return {
+        creatorId: user.id,
         taskDetails: {
           label: task.label,
           description: task.description,

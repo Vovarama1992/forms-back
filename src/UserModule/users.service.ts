@@ -29,9 +29,12 @@ export class UsersService {
       });
       const userId = decoded.sub;
 
-      return this.prisma.user.findUnique({
+      const user = await this.prisma.user.findUnique({
         where: { id: userId },
       });
+      const { password, ...rest } = user;
+      console.log(password);
+      return rest;
     } catch (error) {
       throw new UnauthorizedException('Invalid token');
     }
