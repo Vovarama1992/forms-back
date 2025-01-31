@@ -169,7 +169,7 @@ export class TaskService {
       );
 
       return {
-        creatorId: user.id,
+        userId: user.id,
         taskDetails: {
           label: task.label,
           description: task.description,

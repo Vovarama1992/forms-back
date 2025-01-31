@@ -90,7 +90,7 @@ export class TaskStatisticsDto {
     description: 'Creator ID of the task',
     example: 1,
   })
-  creatorId: number;
+  userId: number;
 
   @ApiProperty({
     description: 'Task details object',
